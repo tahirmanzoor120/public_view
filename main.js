@@ -1,4 +1,4 @@
-const api = 'http://46.101.193.196:8082/api';
+const api = 'https://track.indo2go.nl/api';
 const mapStyle = 'https://tiles.locationiq.com/v3/streets/vector.json?key=pk.0f147952a41c555a5b70614039fd148b'
 const startingPosition = [0, 0];
 const startingZoom = 2;
@@ -16,8 +16,11 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     map.addControl(new maplibregl.NavigationControl());
     map.on('load', async () => {
+        console.log("Refreshing devices...");
         await refreshDevices();
+        console.log("Refreshing positions...");
         await refreshPositions();
+        console.log("Fitting bounds...");
         fitBounds();
         setInterval(async () => {
             await refreshPositions();
@@ -31,10 +34,14 @@ async function refreshDevices() {
             Authorization: "Basic " + btoa("public" + ":" + "public"),
         },
     });
-    const list = await response.json();
-    devices = {};
-    list.forEach((device) => devices[device.id] = device);
-    displayDevices();
+    if (response.ok) {
+        const list = await response.json();
+        devices = {};
+        list.forEach((device) => devices[device.id] = device);
+        displayDevices();
+    } else {
+        console.log(response.statusText);
+    }
 }
 
 async function refreshPositions() {
