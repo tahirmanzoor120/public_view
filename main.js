@@ -104,22 +104,26 @@ function displayPositions() {
     });
     markers = {};
     Object.values(positions).forEach((position) => {
-        const el = document.createElement('div');
-        el.className = 'marker';
-        el.style.backgroundImage = 'url("marker.png")';
-        el.style.width = '64px';
-        el.style.height = '64px';
-        el.style.backgroundSize = 'cover';
-    
-        const popup = new maplibregl.Popup({offset: 32}).setText(
-            devices[position.deviceId].name
-        );
-    
-        const marker = new maplibregl.Marker({ element: el });
-        marker.setLngLat([position.longitude, position.latitude]);
-        marker.setPopup(popup);
-        marker.addTo(map);
-        markers[position.id] = marker;
+        const difference = new Date() - new Date(position.fixTime);
+        if (difference < 1) {
+            const el = document.createElement('div');
+            el.className = 'marker';
+            el.style.backgroundImage = 'url("marker.png")';
+            el.style.width = '64px';
+            el.style.height = '64px';
+            el.style.backgroundSize = 'cover';
+
+            const popup = new maplibregl.Popup({ offset: 32 }).setText(
+                devices[position.deviceId].name
+            );
+
+            const marker = new maplibregl.Marker({ element: el });
+            marker.setLngLat([position.longitude, position.latitude]);
+            marker.setPopup(popup);
+            marker.addTo(map);
+            markers[position.id] = marker;
+        }
+
     });
     if (follow) {
         const position = Object.values(positions).find((position) => position.deviceId == follow.id);
