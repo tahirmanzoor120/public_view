@@ -104,8 +104,11 @@ function displayPositions() {
     });
     markers = {};
     Object.values(positions).forEach((position) => {
-        const difference = new Date() - new Date(position.fixTime);
-        if (difference < 1) {
+        console.log(new Date(position.fixTime));
+        console.log(new Date());
+        const difference = (new Date() - new Date(position.fixTime)) / 1000;
+        console.log(difference);
+        if (difference < 60) {
             const el = document.createElement('div');
             el.className = 'marker';
             el.style.backgroundImage = 'url("marker.png")';
